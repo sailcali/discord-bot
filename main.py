@@ -39,7 +39,8 @@ random_negative = [
 
 @bot.command(name='bedtime', help="Turns off the lights")
 async def bedtime(ctx):
-    
+    """Triggers bedtime via server"""
+
     response = requests.post(f"http://{SERVER_IP}/lighting/bedtime")
 
     if response.status_code == 200:
@@ -50,13 +51,19 @@ async def bedtime(ctx):
 
 @bot.command(name='landscape', help="Trigger the landscape lights (on/off)")
 async def landscape_on(ctx, request):
-    
+    """Triggers landscape lighting on or off via server"""
+    if not request:
+        await ctx.send('I need to know what to do with the lights! (on/off)')
+        return
+    if request.lower() not in ['on', 'off']:
+        await ctx.send('Please specify ON or OFF!')
+        return
     state = False
     if request.lower() == 'on':
         state = True
-    print(state)
+
     response = requests.post(f"http://{SERVER_IP}/landscape/change-state", json={"state": state})
-    print(response.status_code)
+
     if response.status_code == 201:
         message = random.choice(random_affirm)
     else:
@@ -64,8 +71,16 @@ async def landscape_on(ctx, request):
     await ctx.send(message)
 
 @bot.command(name='pool-temp', help="Change the set pool temp in F (i.e. !pool-temp 85)")
-async def pool_change(ctx, request):
-
+async def pool_change(ctx, request=None):
+    """Changes pool set temp based on param provided via server"""
+    if not request:
+        await ctx.send('Please pass a valid temperature!')
+        return
+    try:
+        int(request)
+    except ValueError:
+        await ctx.send('Please pass a valid temperature!')
+        return
     response = requests.post(f"http://{SERVER_IP}/pool/temp/set-temp", json={"setting": request})
 
     if response.status_code == 201:
@@ -77,7 +92,8 @@ async def pool_change(ctx, request):
 
 @bot.command(name='pool-info', help="See current pool temps")
 async def pool_info(ctx):
-    
+    """Gathers current pool status from server and sends as message"""
+
     valve = "closed"
 
     response = requests.get(f"http://{SERVER_IP}/pool")
@@ -95,14 +111,13 @@ async def pool_info(ctx):
 
 @bot.command(name='climate-info', help="See current house climate")
 async def pool_info(ctx):
-    
-    valve = "closed"
+    """Gathers current climate data from server and sends back as message"""
 
     response = requests.get(f"http://{SERVER_IP}/climate/current_temps")
     data = response.json()
     
     if response.status_code == 200:
-        message = f"""Temp at thermostat {data['thermostat']}°F.\nTemp at server {int(data['living_room'])}°F.\nTemp outside {int(data['outside'])}°F.\nTemp in garage {data['garage']}°F.\nBarometric Pressure {data['pressure']}mb."""
+        message = f"""Temp at thermostat {int(data['thermostat'])}°F.\nTemp at server {int(data['living_room'])}°F.\nTemp outside {int(data['outside'])}°F.\nTemp in garage {data['garage']}°F.\nBarometric Pressure {data['pressure']}mb."""
     else:
         message = random.choice(random_negative)
     
