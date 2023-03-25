@@ -1,4 +1,4 @@
-# bot.py
+#!/usr/bin/discord-bot/venv/bin/python3
 
 import os
 import random
@@ -10,7 +10,8 @@ import requests
 load_dotenv()
 
 TOKEN = os.getenv('DISCORD_TOKEN')
-SERVER_IP = "192.168.86.205"
+SERVER_IP = os.getenv('SERVER_IP')
+
 intents = Intents.default()
 intents.members = True
 intents.message_content = True
