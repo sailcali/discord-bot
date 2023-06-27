@@ -102,8 +102,11 @@ async def pool_info(ctx):
     if response.status_code == 200:
         if data['valve'] == 1:
             valve = "open"
-        
-        message = f"""Solar valve is currently {valve}.\nPool temp is currently {data['water_temp']}°F.\nRoof sensor is reading: {data['roof_temp']}°F.\nSet temp is {data['set_temp']}°F."""
+        if data['max_hit_delay'] > 0:
+            max_msg = "We've hit max temp today!"
+        else:
+            max_msg = "Under max temp all day so far."
+        message = f"""Solar valve is currently {valve}.\nPool temp is currently {data['water_temp']}°F.\nRoof sensor is reading: {data['roof_temp']}°F.\nSet temp is {data['set_temp']}°F.\n""" + max_msg
     else:
         message = random.choice(random_negative)
     
