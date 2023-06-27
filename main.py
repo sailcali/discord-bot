@@ -96,14 +96,14 @@ async def pool_info(ctx):
 
     valve = "closed"
 
-    response = requests.get(f"http://{SERVER_IP}/pool")
+    response = requests.get(f"http://{SERVER_IP}/pool/status")
     data = response.json()
     
     if response.status_code == 200:
         if data['valve'] == 1:
             valve = "open"
         
-        message = f"""Solar valve is currently {valve}.\nPool temp is currently {int(data['water_temp'])}°F.\nRoof sensor is reading: {int(data['roof_temp'])}°F.\nSet temp is {data['set_temp']}°F."""
+        message = f"""Solar valve is currently {valve}.\nPool temp is currently {data['water_temp']}°F.\nRoof sensor is reading: {data['roof_temp']}°F.\nSet temp is {data['set_temp']}°F."""
     else:
         message = random.choice(random_negative)
     
