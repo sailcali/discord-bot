@@ -70,7 +70,7 @@ async def landscape_on(ctx, request):
         message = random.choice(random_negative)
     await ctx.send(message)
 
-@bot.command(name='pool-temp', help="Change the set pool temp in F (i.e. !pool-temp 85)")
+@bot.command(name='pooltemp', help="Change the set pool temp in F (i.e. !pool-temp 85)")
 async def pool_change(ctx, request=None):
     """Changes pool set temp based on param provided via server"""
     if not request:
@@ -90,7 +90,7 @@ async def pool_change(ctx, request=None):
     
     await ctx.send(message)
 
-@bot.command(name='pool-info', help="See current pool temps")
+@bot.command(name='poolinfo', help="See current pool temps")
 async def pool_info(ctx):
     """Gathers current pool status from server and sends as message"""
 
@@ -112,7 +112,7 @@ async def pool_info(ctx):
     
     await ctx.send(message)
 
-@bot.command(name='climate-info', help="See current house climate")
+@bot.command(name='climateinfo', help="See current house climate")
 async def pool_info(ctx):
     """Gathers current climate data from server and sends back as message"""
 
@@ -123,6 +123,30 @@ async def pool_info(ctx):
         message = f"""Temp at thermostat {int(data['thermostat'])}°F.\nTemp at server {int(data['living_room'])}°F.\nTemp outside {int(data['outside'])}°F.\nTemp in garage {data['garage']}°F.\nBarometric Pressure {data['pressure']}mb."""
     else:
         message = random.choice(random_negative)
+    
+    await ctx.send(message)
+
+@bot.command(name='poolvalveclose', help="Close pool valve")
+async def close_pool_valve(ctx):
+    """Closes pool valve manually"""
+
+    response = requests.post(f"http://{SERVER_IP}/pool/valve/close", json={"delay": 0})
+    if response.status_code == 200:
+        message = "Pool valve set to close"
+    else:
+        message = "Sorry, try again"
+    
+    await ctx.send(message)
+
+@bot.command(name='poolvalveopen', help="Open pool valve")
+async def open_pool_valve(ctx):
+    """Opens pool valve manually"""
+
+    response = requests.post(f"http://{SERVER_IP}/pool/valve/open", json={"delay": 0})
+    if response.status_code == 200:
+        message = "Pool valve set to open"
+    else:
+        message = "Sorry, try again"
     
     await ctx.send(message)
 
