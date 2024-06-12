@@ -131,7 +131,7 @@ async def close_pool_valve(ctx):
     """Closes pool valve manually"""
 
     response = requests.post(f"http://{SERVER_IP}/pool/valve/close", json={"delay": 0})
-    if response.status_code == 200:
+    if response.status_code == 201:
         message = "Pool valve set to close"
     else:
         message = "Sorry, try again"
@@ -143,7 +143,7 @@ async def open_pool_valve(ctx):
     """Opens pool valve manually"""
 
     response = requests.post(f"http://{SERVER_IP}/pool/valve/open", json={"delay": 0})
-    if response.status_code == 200:
+    if response.status_code == 201:
         message = "Pool valve set to open"
     else:
         message = "Sorry, try again"
